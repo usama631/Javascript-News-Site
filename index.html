@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Site</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+ 
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" >
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">News Site</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+          
+
+
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+
+  <div id="googleMap" style="width:100%;height:400px;"></div>
+
+
+  <div id="result" class="row"> 
+    
+
+  </div>
+
+ <script>  function myMap() {
+  var mapCanvas = document.getElementById("googleMap");
+  var mapOptions = {
+    center: new google.maps.LatLng(31.582045, 74.329376), zoom: 10
+  };
+  var map = new google.maps.Map(mapCanvas, mapOptions);
+  }
+ </script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-SwcKL5RmIADJMrSevSom7vTqoH-Jqxs&callback=myMap"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+ 
+
+  <script>
+    var httpRequest = new XMLHttpRequest();
+    var url= "http://api.mediastack.com/v1/news?access_key=d4fbafedcac2f7cd7ee56ef36f930e83&countries=in";
+
+    //Make Request 
+
+    function makeRequest(){
+
+    if(!httpRequest){
+      alert("Error No HTTP Request!");
+      return;
+    }
+    httpRequest.onreadystatechange=getResponse;
+    httpRequest.open('GET', url);
+    httpRequest.send();
+    }
+
+    function getResponse(){
+      if(httpRequest.readyState === XMLHttpRequest.DONE){
+        //Status is Ok or Not
+        if(httpRequest.status===200){
+
+          var responseText = httpRequest.responseText;
+          var jsonResponse = JSON.parse(responseText);
+          insertIntoHTML(jsonResponse);
+          
+        }
+        else{
+          alert('No response from server!');
+        }
+      }
+    }
+
+    function insertIntoHTML(jsonResponse){
+
+      var resultDiv = document.getElementById('result');
+      //make sure inner HTML is empty
+      resultDiv.innerHTML="";
+
+      var arrayOfNews = jsonResponse.data;
+
+      arrayOfNews.map((item, index) => {
+        if(item.image!= null && item.image!="https:\/\/en.mercopress.com\/data\/cache\/noticias\/80912\/100x80\/lula.png"){
+        resultDiv.innerHTML += 
+        '<div class="col-lg-3" style="margin-left: 100px; margin-top:10px;">'+
+            '<div class="card" style="width: 20rem;">'+
+              '<img src="'+item.image+'" class="card-img-top" alt="image.jpeg">'+
+                 '<div class="card-body">'+
+                    '<h5 class="card-title">'+item.title+'</h5>'+
+                    '<p class="card-text">'+item.description+'</p>'+
+                  '</div>'+
+             '</div>'+
+         '</div>';}
+      });
+    }
+
+    makeRequest();
+
+    
+  </script>
+</body>
+
+</html>
